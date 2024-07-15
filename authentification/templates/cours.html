@@ -1,4 +1,4 @@
-
+{% if user.choix != 0 %}
 {% load static %}
 
 <!DOCTYPE html>
@@ -135,3 +135,8 @@
     </script>
 </body>
 </html>
+{% else %}
+ <script>
+    window.location.href = "{% url 'authentification:paiement' %}";
+ </script>
+{% endif %}

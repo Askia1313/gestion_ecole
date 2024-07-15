@@ -48,8 +48,10 @@
    {% endif %}
         
          {{ form.as_p }}
+         <a href="{% url 'authentification:password_reset_request' %}">mots de passe oublier</a>
          <input type="submit" value="Login Now" class="btn">
       </form>
+
    </div>
    
 <script>

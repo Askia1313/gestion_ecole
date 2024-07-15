@@ -53,6 +53,7 @@ class ProfCreationForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.est_prof = True
+        user.is_active = True
         if not user.username:  # Assurez-vous de ne pas écraser un nom d'utilisateur existant
             user.username = user.email or user.telephone  # Utilisez l'email ou le téléphone comme nom d'utilisateur unique
         if commit:

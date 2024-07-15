@@ -214,18 +214,48 @@ def update_profil(request):
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth import views as auth_views
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.conf import settings
+
+User = get_user_model()
 
 def password_reset_request(request):
     if request.method == "POST":
         form = PasswordResetForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('password_reset_done')
+            data = form.cleaned_data['email']
+            try:
+                user = User.objects.get(email=data)
+            except User.DoesNotExist:
+                info= "cet utilisateurs n'existe pas."
+                return render(request, 'password_reset_form.html', {'form': form, 'info': info})
+
+            subject = "modification de votre mot de passe"
+            email_template_name = "password_reset_email.html"
+            context = {
+                "email": user.email,
+                'domain': request.META['HTTP_HOST'],
+                'site_name': 'educa',
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "user": user,
+                'token': default_token_generator.make_token(user),
+                'protocol': 'http',
+            }
+            email = render_to_string(email_template_name, context)
+            send_mail(subject, email, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
+            return redirect('authentification:password_reset_done')
     else:
         form = PasswordResetForm()
     return render(request, 'password_reset_form.html', {'form': form})
 
+
+def password_reset_complete(request):
+    return redirect('authentification:login')
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -360,3 +390,135 @@ def send_welcome_email(user, password):
     recipient_list = [user.email]
     send_mail(subject, message, from_email, recipient_list)
 
+
+
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from datetime import datetime
+from random import randint
+from django.conf import settings
+from .models import CustomUser
+import requests
+
+API_KEY = "MAGPMLT3QFJLIPUDN"
+BEARER_TOKEN = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZF9hcHAiOjE1MDA5LCJpZF9hYm9ubmUiOjg5OTQyLCJkYXRlY3JlYXRpb25fYXBwIjoiMjAyNC0wNC0wOCAwODozMjoyNCJ9.NRcyHfFO8OyaXOaklZ2DJ2Arf-gV8OXGfMIELQzdw88"
+
+def payin_with_redirection(transaction_id, nom, prenom, email, total_price):
+    url = "https://app.ligdicash.com/pay/v01/redirect/checkout-invoice/create"
+    payload = {
+        "commande": {
+            "invoice": {
+                "items": [
+                    {
+                        "name": "Abonnement EDUCA",
+                        "description": "Abonnement aux cours sur EDUCA",
+                        "quantity": 1,
+                        "unit_price": total_price,
+                        "total_price": total_price
+                    }
+                ],
+                "total_amount": total_price,
+                "devise": "XOF",
+                "description": "Abonnement aux cours sur EDUCA",
+                "customer": "",
+                "customer_firstname": nom,
+                "customer_lastname": prenom,
+                "customer_email": email
+            },
+            "store": {
+                "name": "EDUCA",
+                "website_url": "http://localhost/APP1/"
+            },
+            "actions": {
+                "cancel_url": "http://127.0.0.1:8000/APP1/",
+                "return_url": "http://127.0.0.1:8000/APP1/cours",
+                "callback_url": "http://127.0.0.1:8000/APP1/ligdicash-callback/"  # Callback URL configurée
+            },
+            "custom_data": {
+                "transaction_id": transaction_id
+            }
+        }
+    }
+    headers = {
+        "Apikey": API_KEY,
+        "Authorization": BEARER_TOKEN,
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.ok:
+        return response.json()
+    else:
+        return {"response_code": response.status_code, "response_text": "Erreur lors de la requête HTTP"}
+
+def paiement(request):
+    if request.method == 'POST':
+        # Récupérer les données du formulaire
+        type_abonnement = request.POST.get('type_abonnement')
+        total_price = 100 if type_abonnement == 'standard' else 150
+        choix = 1 if type_abonnement == 'standard' else 2
+
+        # Récupérer les informations de l'utilisateur
+        user = request.user
+        nom = user.last_name
+        prenom = user.first_name
+        email = user.email
+
+        transaction_id = f"EDUCA{datetime.now().strftime('%Y%m%d_%H%M')}.C{randint(5, 100000)}"
+
+        # Appel à l'API Ligdicash pour créer une commande
+        redirect_payin = payin_with_redirection(transaction_id, nom, prenom, email, total_price)
+
+        # Vérifiez et traitez la réponse
+        if 'response_code' in redirect_payin:
+            response_code = redirect_payin['response_code']
+            if response_code == "00":
+                # Stocker les informations dans la session
+                request.session['choix'] = choix
+                request.session['transaction_id'] = transaction_id
+                user.ID_transaction = transaction_id
+                user.save()
+
+                # Redirection vers l'URL de paiement
+                return redirect(redirect_payin['response_text'])
+            else:
+                # Gestion des erreurs
+                response_text = redirect_payin.get('response_text', '')
+                description = redirect_payin.get('description', '')
+                return HttpResponse(f"Erreur {response_code}: {response_text}<br><br>{description}")
+        else:
+            return HttpResponse("Une erreur s'est produite lors de la demande de paiement.")
+    else:
+        # Afficher le formulaire HTML
+        return render(request, 'abonnement.html')
+
+
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+
+@csrf_exempt
+def verifier_transaction(request, transaction_id):
+    url = f"https://app.ligdicash.com/pay/v01/redirect/checkout-invoice/confirm/?invoiceToken={transaction_id}"
+    headers = {
+        'Apikey': API_KEY,
+        'Authorization': BEARER_TOKEN,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    }
+    response = requests.get(url, headers=headers)
+
+    if response.ok:
+        response_data = response.json()
+        status = response_data.get('status')
+        if status == 'completed':
+            # Mettre à jour l'utilisateur
+            user = request.user
+            user.choix = request.session.get('choix', user.choix)
+            user.save()
+            return redirect('cours')  # Redirection vers la page de cours
+        else:
+            return HttpResponse("La transaction n'a pas été complétée.")
+    else:
+        return HttpResponse("Erreur lors de la vérification de la transaction.")

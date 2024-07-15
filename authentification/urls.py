@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from .views import home, contact, cours, login_user, register, forget_password, verifier_email, logout_user, mes_infos, verify_code, update_profil,exercice_list,quiz,submit_quiz,create_prof,password_reset_request
+from .views import home, contact, cours, login_user, register, forget_password, verifier_email, logout_user, mes_infos, verify_code, update_profil,exercice_list,quiz,submit_quiz,create_prof,password_reset_request,paiement,password_reset_complete,verifier_transaction
 from django.contrib.auth import views as auth_views
 app_name = 'authentification'
 
@@ -21,13 +21,17 @@ urlpatterns = [
     path('quiz/<int:exercice_id>/', quiz, name='quiz'),
     path('exercice/<int:exercice_id>/submit/', submit_quiz, name='submit_quiz'),
     path('create_prof/', create_prof, name='create_prof'),
+    path('verifier-transaction/<str:transaction_id>/', verifier_transaction, name='verifier_transaction'),
 
     path('password_reset/', password_reset_request, name='password_reset_request'),
     path('reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset_done.html'),
          name='password_reset_done'),
-    path('reset/<uidb64>/<token>/',
-         auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'),
+    path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'),
          name='password_reset_confirm'),
-    path('reset/complete/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),
+    path('password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),
          name='password_reset_complete'),
+    path('paiement/', paiement, name='paiement'),
+
+
+
 ]

@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire de Paiement</title>
+       <!-- Font Awesome CDN link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Swiper CSS link -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+
+    <!-- Custom CSS file link -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        select,
+        button {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+   <header class="header">
+    <a href="#" class="logo"> <i class="fas fa-lightbulb"></i> educa </a>
+    <div id="menu-toggle" class="menu-toggle">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+       <nav id="navbar" class="navbar">
+            <a href="{% url 'authentification:home' %}">Accueil</a>
+            <a href="{% url 'authentification:cours' %}">Cours</a>
+            <a href="{% url 'authentification:contact' %}">Contact</a>
+            <span>{{ user.nom }}</span>
+            <a href="{% url 'authentification:mes_infos' %}" class="profile-icon">
+                <img src="{% static 'images/profile-icon.png' %}" alt="Profile Icon">
+            </a>
+            <a href="{% url 'authentification:logout_user' %}">Déconnexion</a>
+        </nav>
+    </header>
+    <div class="container">
+        <form method="POST" action="{% url 'authentification:paiement' %}">
+            {% csrf_token %}
+            abonnez vous afin de profiter des meilleurs cours et exercice sur EDUCA
+            <label for="type_abonnement">Type d'abonnement:</label>
+            <select id="type_abonnement" name="type_abonnement">
+                <option value="standard">Standard - 100 XOF</option>
+                <option value="premium">Premium - 150 XOF</option>
+            </select>
+            <button type="submit">Payer</button>
+        </form>
+    </div>
+</body>
+<script>
+    // Sélectionnez le menu-toggle et la barre de navigation
+    const menuToggle = document.getElementById('menu-toggle');
+    const navbar = document.getElementById('navbar');
+
+    // Ajoutez un gestionnaire d'événement au clic sur le menu-toggle
+    menuToggle.addEventListener('click', function() {
+        // Basculez la visibilité de la barre de navigation
+        navbar.classList.toggle('navbar-open');
+        menuToggle.classList.toggle('menu-open');
+    });
+</script>
+</html>
