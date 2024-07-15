@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Exercices</title>
+    <!-- Mettez ici vos liens CDN et fichiers CSS personnalisés -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 50px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        h3 {
+            margin: 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        p {
+            margin: 5px 0 10px;
+            color: #777;
+        }
+
+        .start-quiz-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .start-quiz-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<a href="{% url 'authentification:cours'%}" class="start-quiz-button">retour aux cours</a>
+<section class="exercice-list">
+    <div class="container">
+        <h2>Liste des Exercices Disponibles</h2>
+        <ul>
+            {% for exercice in exercices %}
+                <li>
+                    <h3>{{ exercice.titre }}</h3>
+                    <p>Exercice pour le cours : {{ exercice.cours.nom_cours }}</p>
+                    <a href="{% url 'authentification:quiz' exercice.id %}" class="start-quiz-button">Commencer le Quiz</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+
+<!-- Mettez ici vos scripts JavaScript -->
+
+</body>
+</html>

@@ -1,0 +1,161 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <!-- font awesome cdn link  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- swiper css link  -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+    <!-- custom css file link  -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+</head>
+<body>
+
+<!-- header section starts  -->
+<header class="header">
+    <a href="#" class="logo"> <i class="fas fa-lightbulb"></i> educa </a>
+    <div id="menu-toggle" class="menu-toggle">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+    <nav id="navbar" class="navbar">
+       
+     
+ 
+    
+
+        {% if not  user.is_authenticated %}
+             <a href="{% url 'authentification:home' %}">Accueil</a>
+            <a href="{% url 'authentification:cours' %}">Cours</a>
+            <a href="{% url 'authentification:register' %}">S'inscrire</a>
+            <a href="{% url 'authentification:login_user' %}">Se connecter</a>
+                                 <a href="{% url 'authentification:contact' %}">Contact</a>
+            {% else %}
+            
+            <a href="{% url 'authentification:home' %}">Accueil</a>
+                 {% if user.est_prof %}
+
+                      <a href="{% url 'gestion_cours:gestion_cours' %}">gestion des cours</a>
+                     <a href="{% url 'authentification:mes_infos' %}" class="profile-icon">
+                <img src="{% static 'images/profile-icon.png' %}" alt="Profile Icon">{{ user.nom }}
+            </a>
+                     <a href="{% url 'authentification:contact' %}">Contact</a>
+            <a href="{% url 'authentification:logout_user' %}">Déconnexion</a>
+                     {% else %}
+                        <a href="{% url 'authentification:cours' %}">Cours</a>
+                        <a href="{% url 'authentification:mes_infos' %}" class="profile-icon">
+                <img src="{% static 'images/profile-icon.png' %}" alt="Profile Icon">{{ user.nom }}
+            </a>
+                     <a href="{% url 'authentification:contact' %}">Contact</a>
+            <a href="{% url 'authentification:logout_user' %}">Déconnexion</a>
+            {% endif %}
+        {% endif %}
+    {% if user.is_superuser and user.is_staff %}
+         <a href="{% url 'authentification:create_prof' %}">ajout-prof</a>
+    {% endif %}
+    </nav>
+</header>
+
+<!-- home section starts  -->
+<section class="home">
+    <div class="swiper home-slider">
+        <div class="swiper-wrapper">
+            <section class="swiper-slide slide" style="background: url({% static 'images/home-slide-1.jpg' %}) no-repeat;">
+                <div class="content">
+                    <h3>Vous trouverez les meilleurs cours ici!</h3>
+                    <p>Un univers de cours, exercices, devoirs et bien plus encore...</p>
+                    {% if user.est_prof %}
+                         <a href="{% url 'gestion_cours:gestion_cours' %}" class="btn">c'est parti
+                    {% else %}
+                    <a href="{% url 'authentification:cours' %}" class="btn">c'est parti
+                        
+                        {% endif %}
+                    </a>
+                </div>
+            </section>
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
+
+<!-- home section ends -->
+
+<!-- subjects section starts  -->
+<section class="subjects">
+    <h1 class="heading">Nous disposons de cours de :</h1>
+    <div class="box-container">
+        <div class="box">
+            <img src="{% static 'images/math.jpg' %}" alt="">
+            <h3>Mathématiques</h3>
+        </div>
+        <div class="box">
+            <img src="{% static 'images/pc.jpeg' %}" alt="">
+            <h3>Physique Chimie</h3>
+        </div>
+        <div class="box">
+            <img src="{% static 'images/hg.jpg' %}" alt="">
+            <h3>Histoire-Géographie</h3>
+        </div>
+        <div class="box">
+            <img src="{% static 'images/SVT.png' %}" alt="">
+            <h3>Sciences de la Vie et de la Terre</h3>
+        </div>
+        <div class="box">
+            <img src="{% static 'images/english.jpeg' %}" alt="">
+            <h3>Anglais</h3>
+        </div>
+        <div class="box">
+            <img src="{% static 'images/philo.jpg' %}" alt="">
+            <h3>Philosophie</h3>
+        </div>
+    </div>
+</section>
+
+<!-- footer section starts  -->
+<section class="footer">
+    <div class="box-container">
+        <div class="box">
+            <h3> <i class="fas fa-lightbulb"></i> educa </h3>
+            <p>Un monde d'apprentissage infini...</p>
+            <div class="share">
+                <a href="https://www.facebook.com/" class="fab fa-facebook-f"></a>
+                <a href="https://www.twitter.com/" class="fab fa-twitter"></a>
+                <a href="https://www.instagram.com/" class="fab fa-instagram"></a>
+                <a href="https://www.linkedin.com/" class="fab fa-linkedin"></a>
+            </div>
+        </div>
+        <div class="box">
+            <h3>Liens utiles</h3>
+            <a href="#" class="link">Université Nazi Boni</a>
+            <a href="#" class="link">Université Joseph Ki-Zerbo</a>
+            <a href="#" class="link">Université Norbert Zongo</a>
+            <a href="#" class="link">Aide</a>
+            <a href="#" class="link">Questions</a>
+        </div>
+    </div>
+    <div class="credit">Créé par <span>Konate-Sawadogo Team</span> | Tous droits réservés!</div>
+</section>
+
+<script>
+    // Sélectionnez le menu-toggle et la barre de navigation
+    const menuToggle = document.getElementById('menu-toggle');
+    const navbar = document.getElementById('navbar');
+
+    // Ajoutez un gestionnaire d'événement au clic sur le menu-toggle
+    menuToggle.addEventListener('click', function() {
+        // Basculez la visibilité de la barre de navigation
+        navbar.classList.toggle('navbar-open');
+        menuToggle.classList.toggle('menu-open');
+    });
+</script>
+
+</body>
+</html>

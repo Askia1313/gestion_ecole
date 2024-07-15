@@ -1,0 +1,218 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Informations Personnelles</title>
+
+   <!-- Font Awesome CDN -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+   <!-- Swiper CSS -->
+   <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+
+   <!-- Custom CSS -->
+   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+   
+   <style>
+.profile-section {
+   background-color: #f9f9f9;
+   padding: 20px;
+   border-radius: 8px;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+   margin-bottom: 20px;
+}
+
+.profile-section h2 {
+   color: #333;
+   border-bottom: 1px solid #ccc;
+   padding-bottom: 10px;
+}
+
+.profile-section p {
+   font-size: 16px;
+   margin-bottom: 10px;
+}
+
+.profile-section p:last-child {
+   margin-bottom: 0;
+}
+      body {
+   font-family: Arial, sans-serif;
+   background-color: #f0f0f0;
+   margin: 0;
+   padding: 0;
+}
+
+.main-content {
+   max-width: 800px;
+   margin: 20px auto;
+   background-color: #fff;
+   padding: 20px;
+   border-radius: 8px;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Titres */
+h2 {
+   color: #333;
+   margin-bottom: 15px;
+}
+
+/* Formulaire */
+form {
+   display: grid;
+   grid-template-columns: 1fr 2fr;
+   grid-gap: 10px;
+}
+
+label {
+   font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+select {
+   width: 100%;
+   padding: 8px;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+   box-sizing: border-box;
+   font-size: 14px;
+   margin-bottom: 10px;
+}
+
+button[type="submit"] {
+   background-color: #4CAF50;
+   color: white;
+   padding: 10px 20px;
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+   font-size: 14px;
+}
+
+button[type="submit"]:hover {
+   background-color: #45a049;
+}
+
+/* Section de profil */
+.profile-section {
+   margin-bottom: 20px;
+}
+
+/* Section de modification de profil */
+.edit-profile-section {
+   border-top: 1px solid #ccc;
+   padding-top: 20px;
+}
+
+/* Icône de profil */
+.profile-icon {
+   display: inline-block;
+   margin-left: 10px;
+   cursor: pointer;
+}
+
+.profile-icon img {
+   width: 30px;
+   height: 30px;
+   border-radius: 50%;
+}
+
+   </style>
+</head>
+<body>
+   <header class="header">
+    <a href="#" class="logo"> <i class="fas fa-lightbulb"></i> educa </a>
+    <div id="menu-toggle" class="menu-toggle">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+       <nav id="navbar" class="navbar">
+            <a href="{% url 'authentification:home' %}">Accueil</a>
+            <a href="{% url 'authentification:contact' %}">Contact</a>
+
+           {% if  user.is_authenticated %}
+            
+            <a href="{% url 'authentification:mes_infos' %}" class="profile-icon">
+                <img src="{% static 'images/profile-icon.png' %}" alt="Profile Icon">
+            <span>{{ user.nom }}</span>
+            </a>
+               <a href="{% url 'authentification:logout_user' %}">Déconnexion</a>
+           {% else %}           
+            <a href="{% url 'authentification:register' %}">S'inscrire</a>
+            <a href="{% url 'authentification:login_user' %}">Se connecter</a>
+           {% endif %}
+        </nav>
+    </header>
+   
+<!-- Header Section -->
+
+
+<!-- Main Content Section -->
+<div class="main-content">
+   <section class="profile-section">
+      <h2>Informations Personnelles</h2>
+      <p>Nom : {{ user.nom }}</p>
+      <p>Prénom : {{ user.prenom }}</p>
+      <p>Email : {{ user.email }}</p>
+      <p>Numéro de Téléphone : {{ user.telephone }}</p>
+       {%if not  user.est_prof%}
+      <p>Niveau : {{ user.niveau }}</p>
+       {% endif %}
+      <!-- Ajoutez d'autres champs de profil ici selon votre modèle User -->
+   </section>
+
+   <section class="edit-profile-section">
+      <h2>Modifier Informations</h2>
+      <form id="update-form" action="{% url 'authentification:update_profil' %}" method="POST">
+         {% csrf_token %}
+         <label for="nom">Nom :</label>
+         <input type="text" id="nom" name="nom" value="{{ user.nom }}" required>
+         <label for="prenom">Prénom :</label>
+         <input type="text" id="prenom" name="prenom" value="{{ user.prenom }}" required>
+         <label for="email">Email :</label>
+         <input type="email" id="email" name="email" value="{{ user.email }}" required>
+         <label for="telephone">Numéro de Téléphone :</label>
+         <input type="text" id="telephone" name="telephone" value="{{ user.telephone }}" required>
+      {%if not  user.est_prof%}
+    <label for="niveau">Niveau :</label>
+    <select name="niveau" id="niveau">
+        <option value="6e" {% if user.niveau == "6e" %}selected{% endif %}>6eme</option>
+        <option value="5e" {% if user.niveau == "5e" %}selected{% endif %}>5eme</option>
+        <option value="4e" {% if user.niveau == "4e" %}selected{% endif %}>4eme</option>
+        <option value="3e" {% if user.niveau == "3e" %}selected{% endif %}>3eme</option>
+        <option value="2nd" {% if user.niveau == "2nd" %}selected{% endif %}>2nd</option>
+        <option value="1ere" {% if user.niveau == "1ere" %}selected{% endif %}>1ere</option>
+        <option value="Tle" {% if user.niveau == "Tle" %}selected{% endif %}>Tle</option>
+    </select>
+    {% endif %}
+         <!-- Ajoutez d'autres champs pour la modification ici -->
+         <button type="submit">Enregistrer</button>
+      </form>
+   </section>
+</div>
+
+
+
+
+<script>
+    // Sélectionnez le menu-toggle et la barre de navigation
+    const menuToggle = document.getElementById('menu-toggle');
+    const navbar = document.getElementById('navbar');
+
+    // Ajoutez un gestionnaire d'événement au clic sur le menu-toggle
+    menuToggle.addEventListener('click', function() {
+        // Basculez la visibilité de la barre de navigation
+        navbar.classList.toggle('navbar-open');
+        menuToggle.classList.toggle('menu-open');
+    });
+</script>
+
+</body>
+</html>

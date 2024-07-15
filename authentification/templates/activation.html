@@ -1,0 +1,29 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mon_compte</title>
+    
+    <p>{{ message1 }} </p>
+    <p>{{ message }} </p>
+     <p style="color: firebrick"> {{ info2 }} </p>
+     
+        <form action="{% url 'authentification:verifier_email' %}" method="post">
+           {% csrf_token %}
+            <label for="email">Entrer votre mail de reception:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="code">Entrer votre code:</label>
+        <input type="number" id="code" name="code" required>
+        <button type="submit">Submit</button>
+        <form action="{% url 'authentification:verifier_email' %}" method="post">
+          revoyer un autre
+
+        <button type="submit">Submit</button>
+          
+    </form>
+</head>
+<body>
+
+</body>
+</html>

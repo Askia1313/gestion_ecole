@@ -1,0 +1,236 @@
+{% if user.est_prof %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ajouter Exercice</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Swiper CSS link -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* CSS général */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .button-section {
+            background: forestgreen;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50px;
+            text-align: center;
+            border-bottom: 5px;
+        }
+
+        .action-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+            padding-top: 50px; /* for header */
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            margin: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2, h3 {
+            color: #333;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .choice-form {
+            margin-top: 10px;
+        }
+
+        .choice-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .choice-form input[type="text"] {
+            padding: 8px;
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+
+        .question-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .question-form input[type="text"] {
+            padding: 10px;
+            width: 100%;
+            height: 20px; /* Ajustez la hauteur selon vos besoins */
+            margin-bottom: 15px;
+            border: 2px solid black; /* Bordure plus prononcée */
+            border-radius: 5px;
+            font-size: 16px; /* Taille de police */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Légère ombre pour délimiter le champ */
+        }
+
+
+
+        .delete-button i {
+            margin-right: 5px;
+        }
+
+        .delete-button:hover {
+            background-color: #ff1a1a;
+        }
+
+        /* Ajustements de mise en page responsive */
+        @media screen and (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .form-wrapper {
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            .button-section {
+                justify-content: center; /* Centre les boutons horizontalement */
+                flex-wrap: wrap; /* Permet le retour à la ligne des boutons */
+                flex-direction: row;
+            }
+
+            .action-button {
+                padding: 4px 8px; /* Réduit le padding pour compacter les boutons */
+                font-size: 8px; /* Réduit la taille de la police */
+                margin: 5px; /* Réduit l'espacement entre les boutons */
+            }
+        }
+    </style>
+
+</head>
+<body>
+   <header class="header">
+    <a href="#" class="logo"> <i class="fas fa-lightbulb"></i> educa </a>
+    <div id="menu-toggle" class="menu-toggle">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+       <nav id="navbar" class="navbar">
+            <a href="{% url 'authentification:home' %}">Accueil</a>
+            <a href="{% url 'authentification:mes_infos' %}" class="profile-icon">
+                <img src="{% static 'images/profile-icon.png' %}" alt="Profile Icon">
+            <span>{{ user.nom }}</span>
+            </a>
+               <a href="{% url 'authentification:logout_user' %}">Déconnexion</a>
+               <a href="{% url 'authentification:contact' %}">Contact</a>
+        </nav>
+    </header>
+
+    <div class="button-section">
+        <a href="{% url 'gestion_cours:ajout_cours' %}" class="action-button">
+            <i class="fas fa-plus"></i> AJOUTER cours
+        </a>
+        <a href="{% url 'gestion_cours:gestion_cours' %}" class="action-button">
+            <i class="fas fa-plus"></i> mes cours
+        </a>
+        <a href="{% url 'gestion_cours:mes_questions' %}" class="action-button">
+            <i class="fas fa-image"></i> Voir exercice
+        </a>
+    </div>
+    <div class="container">
+        <div class="form-wrapper">
+            <form method="post">
+                {% csrf_token %}
+                <!-- Section pour créer un nouvel exercice -->
+                <h2>Créer un nouvel exercice</h2>
+                {{ exercice_form.as_p }}
+                <button type="submit" name="save_exercice">Enregistrer Exercice</button>
+            </form>
+        </div>
+        <div class="form-wrapper question-form">
+            <form method="post">
+                {% csrf_token %}
+                <!-- Section pour ajouter une question -->
+                <h2>Ajouter une question à un exercice existant</h2>
+                {{ question_form.as_p }}
+                <!-- Formset pour les choix de la question -->
+                <h3>Ajouter des choix à la question</h3>
+                {{ choice_formset.management_form }}
+                {% for form in choice_formset.forms %}
+                    <div class="choice-form">
+                        {{ form.as_p }}
+                    </div>
+                {% endfor %}
+                <button type="submit" name="save_question">Enregistrer Question et Choix</button>
+            </form>
+        </div>
+    </div>
+    <script>
+
+    // Sélectionnez le menu-toggle et la barre de navigation
+    const menuToggle = document.getElementById('menu-toggle');
+    const navbar = document.getElementById('navbar');
+
+    // Ajoutez un gestionnaire d'événement au clic sur le menu-toggle
+    menuToggle.addEventListener('click', function() {
+        // Basculez la visibilité de la barre de navigation
+        navbar.classList.toggle('navbar-open');
+        menuToggle.classList.toggle('menu-open');
+    });
+
+</script>
+    </script>
+</body>
+</html>
+{% else %}
+<script>
+    window.location.href = "{% url 'authentification:home' %}";
+</script>
+{% endif %}

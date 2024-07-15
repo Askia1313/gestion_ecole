@@ -1,0 +1,137 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses</title>
+
+    <!-- Font Awesome CDN link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Swiper CSS link -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+
+    <!-- Custom CSS file link -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+      <link rel="stylesheet" href="{% static 'css/cours.css' %}">
+ 
+<style>
+    
+        .exercice-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+</style>
+</head>
+<body>
+   <header class="header">
+    <a href="#" class="logo"> <i class="fas fa-lightbulb"></i> educa </a>
+    <div id="menu-toggle" class="menu-toggle">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+       <nav id="navbar" class="navbar">
+            <a href="{% url 'authentification:home' %}">Accueil</a>
+            <a href="{% url 'authentification:cours' %}">Cours</a>
+            <a href="{% url 'authentification:contact' %}">Contact</a>
+            <span>{{ user.nom }}</span>
+            <a href="{% url 'authentification:mes_infos' %}" class="profile-icon">
+                <img src="{% static 'images/profile-icon.png' %}" alt="Profile Icon">
+            </a>
+            <a href="{% url 'authentification:logout_user' %}">Déconnexion</a>
+        </nav>
+    </header>
+    
+    <section class="home">
+    <a href="{% url 'authentification:exercice_list' %}" class="exercice-button">VOIR EXERCICE</a>
+        <!-- Contenu de la section des cours -->
+        <div class="main-content">
+            <div class="matieres-section">
+                <h2>LISTE DES MATIERE DISPONIBLE POUR VOTRE CLASSE</h2>
+                {% for matiere in matieres %}
+                    <div class="dropdown" onclick="toggleDropdown('{{ matiere.matiere }}')">
+                        {{ matiere.matiere }} <span id="arrow-{{ matiere.matiere }}">v</span>
+                    </div>
+                    <div class="dropdown-content" id="content-{{ matiere.matiere }}">
+                        {% for chapitre in chapitres %}
+                            {% if chapitre.matiere == matiere.matiere %}
+                                <a href="#" onclick="showCourses({{ chapitre.id }})">{{ chapitre.nom }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="cours-section" id="cours-section">
+                <h2>Liste des cours</h2>
+                <!-- Les cours seront chargés ici -->
+            </div>
+        </div>
+    </section>
+
+    <!-- JavaScript -->
+    <script>
+        function toggleDropdown(matiere) {
+            const content = document.getElementById('content-' + matiere);
+            const arrow = document.getElementById('arrow-' + matiere);
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                arrow.innerText = 'v';
+            } else {
+                content.style.display = 'block';
+                arrow.innerText = '^';
+            }
+        }
+
+        function showCourses(chapitreId) {
+            const courses = {{ cours|safe }};
+            const filteredCourses = courses.filter(course => course.chapitre_id === chapitreId);
+            const coursSection = document.getElementById('cours-section');
+            coursSection.innerHTML = '<h2>Liste des cours</h2>';
+            filteredCourses.forEach(course => {
+                const courseCard = document.createElement('div');
+                courseCard.className = 'course-card';
+                courseCard.innerHTML = `
+                    <h3>${course.nom_cours}</h3>
+                    <p>${course.description}</p>
+                    ${getCourseButton(course.cours_types, course.cours)}
+                `;
+                coursSection.appendChild(courseCard);
+            });
+        }
+
+        function getCourseButton(type, url) {
+            const fullUrl = `{{ MEDIA_URL }}${url}`;  // Utilisation de MEDIA_URL pour le chemin correct vers les médias
+            if (type === '.pdf') {
+                return `<a href="${fullUrl}" target="_blank">Lire le cours (PDF)</a>`;
+            } else if (type === '.mp4') {
+                return `<a href="${fullUrl}" target="_blank">Regarder le cours (Vidéo)</a>`;
+            } else if (type === '.jpeg') {
+                return `<a href="${fullUrl}" target="_blank">Voir le cours (Image)</a>`;
+            } else {
+                return `<a href="${fullUrl}" target="_blank">Lire le cours</a>`;
+            }
+        }
+       
+    // Sélectionnez le menu-toggle et la barre de navigation
+    const menuToggle = document.getElementById('menu-toggle');
+    const navbar = document.getElementById('navbar');
+
+    // Ajoutez un gestionnaire d'événement au clic sur le menu-toggle
+    menuToggle.addEventListener('click', function() {
+        // Basculez la visibilité de la barre de navigation
+        navbar.classList.toggle('navbar-open');
+        menuToggle.classList.toggle('menu-open');
+    });
+
+    </script>
+</body>
+</html>

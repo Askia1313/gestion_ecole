@@ -1,0 +1,214 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses</title>
+
+    <!-- Font Awesome CDN link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Swiper CSS link -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+
+    <!-- Custom CSS file link -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  
+
+
+</head>
+<body>
+   <header class="header">
+    <a href="#" class="logo"> <i class="fas fa-lightbulb"></i> educa </a>
+    <div id="menu-toggle" class="menu-toggle">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+       <nav id="navbar" class="navbar">
+            <a href="{% url 'authentification:home' %}">Accueil</a>
+            <a href="{% url 'authentification:contact' %}">Contact</a>
+
+           {% if  user.is_authenticated %}
+            
+            <a href="{% url 'authentification:mes_infos' %}" class="profile-icon">
+                <img src="{% static 'images/profile-icon.png' %}" alt="Profile Icon">
+            <span>{{ user.nom }}</span>
+            </a>
+               <a href="{% url 'authentification:logout_user' %}">Déconnexion</a>
+           {% else %}           
+            <a href="{% url 'authentification:register' %}">S'inscrire</a>
+            <a href="{% url 'authentification:login_user' %}">Se connecter</a>
+           {% endif %}
+        </nav>
+    </header>
+
+
+
+<!-- header section ends -->
+
+<section class="heading-link">
+   <h3>contacter nous</h3>
+   <p> <a href="home.html">home</a> / contact </p>
+</section>
+
+<!-- contact section starts  -->
+
+<section class="contact">
+    
+
+   <div class="icons-container">
+
+      
+
+      <div class="icons">
+         <i class="fas fa-phone"></i>
+         <h3>telephone :</h3>
+         <p>+226 65940313</p>
+      </div>
+
+      <div class="icons">
+         <i class="fas fa-envelope"></i>
+         <h3> email : </h3>
+         <p>konatefahran3@gmail.com</p>
+      </div>
+
+      <div class="icons">
+         <i class="fas fa-map"></i>
+         <h3>addresse :</h3>
+         <p>burkina faso/ bobo dioulasso</p>
+      </div>
+
+   </div>
+
+   <div class="row">
+
+      <div class="image">
+         <img src="images/contact-img.png" alt="">
+      </div>
+
+   </div>
+
+</section>
+
+<!-- contact section ends -->
+
+<!-- faq section starts  -->
+
+<section class="faq">
+
+   <h1 class="heading">questions utiles</h1>
+
+   <div class="accordion-container">
+
+      <div class="accordion active">
+         <div class="accordion-heading">
+            <h3>comment nous contacter?</h3>
+         </div>
+         <p class="accordion-content">
+           en cas de problemes de quelque nature que ce soit n'hesiter pas a utiliser les contacte ci dessus pour nous joindre
+         </p>
+      </div>
+
+      <div class="accordion active">
+         <div class="accordion-heading">
+            <h3>comment se passe l'abonnement?</h3>
+         </div>
+         <p class="accordion-content">
+         nous disposont de deux offre
+             l'offre standard a 100f le mois et l'offre premium a 150f le mois
+         </p>
+      </div>
+       
+
+      <div class="accordion active">
+         <div class="accordion-heading">
+            <h3>comment se passe l'abonnement?</h3>
+         </div>
+         <p class="accordion-content">
+           les payement se font a travers ligdicash a partir de la bas vous pouvez choisir l'operateur que vous voulez pour le paiement
+         </p>
+      </div>
+       
+
+   </div>
+
+</section>
+
+<!-- faq section ends -->
+
+<!-- logo slider starts  -->
+
+<section class="logo-container">
+   <div class="swiper logo-slider">
+      <div class="swiper-wrapper">
+         <div class="swiper-slide"> <img src="images/partner-logo-1.png" alt=""> </div>
+         <div class="swiper-slide"> <img src="images/partner-logo-2.png" alt=""> </div>
+         <div class="swiper-slide"> <img src="images/partner-logo-3.png" alt=""> </div>
+         <div class="swiper-slide"> <img src="images/partner-logo-4.png" alt=""> </div>
+         <div class="swiper-slide"> <img src="images/partner-logo-5.png" alt=""> </div>
+      </div>
+   </div>
+</section>
+
+<!-- logo slider ends -->
+
+
+
+
+
+
+
+<section class="footer">
+
+   <div class="box-container">
+
+      <div class="box">
+         <h3> <i class="fas fa-lightbulb"></i> educa </h3>
+         <p>Un monde d'apprentissage infini.....</p>
+         <div class="share">
+            <a href="https://www.facebook.com/" class="fab fa-facebook-f"></a>
+            <a href="https://www.twitter.com/" class="fab fa-twitter"></a>
+            <a href="https://www.instagram.com/" class="fab fa-instagram"></a>
+            <a href="https://www.linkedin.com/" class="fab fa-linkedin"></a>
+         </div>
+      </div>
+
+
+
+      <div class="box">
+         <h3>lien utile</h3>
+         <a href="#" class="link">universite nazi boni</a>
+         <a href="#" class="link">universite joseph ky zerbo</a>
+         <a href="#" class="link">universite norbert zongo</a>
+         <a href="#" class="link">aide</a>
+         <a href="#" class="link">questions</a>
+      </div>
+
+
+      </div>
+
+   </div>
+
+   <div class="credit"> created by <span>konate-sawadogo team</span> | all rights reserved! </div>
+
+</section>
+
+<script>
+    // Sélectionnez le menu-toggle et la barre de navigation
+    const menuToggle = document.getElementById('menu-toggle');
+    const navbar = document.getElementById('navbar');
+
+    // Ajoutez un gestionnaire d'événement au clic sur le menu-toggle
+    menuToggle.addEventListener('click', function() {
+        // Basculez la visibilité de la barre de navigation
+        navbar.classList.toggle('navbar-open');
+        menuToggle.classList.toggle('menu-open');
+    });
+</script>
+</body>
+</html>

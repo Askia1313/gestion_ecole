@@ -1,0 +1,85 @@
+
+        body {
+            font-family: Arial, sans-serif; /* Choisir une police lisible */
+            line-height: 1.6; /* Espacement des lignes pour une meilleure lisibilité */
+        }
+
+
+        .main-content {
+            display: flex;
+            flex-wrap: wrap; /* Pour assurer la responsivité */
+            justify-content: space-around; /* Espacement équitable des sections */
+            padding: 20px; /* Espacement global */
+        }
+        .matieres-section, .cours-section {
+            padding: 20px;
+            box-sizing: border-box; /* Pour inclure les paddings dans la largeur/hauteur */
+            flex: 1 1 40%; /* Pour occuper 40% de la largeur sur les grands écrans et 100% sur les petits */
+            background-color: #f2f2f2; /* Couleur de fond */
+            border-radius: 10px; /* Coins arrondis */
+            margin: 10px; /* Espacement entre les sections */
+        }
+        .cours-section {
+            background-color: #e0e0e0;
+            border-left: 1px solid #ccc;
+        }
+        .dropdown {
+            cursor: pointer;
+            margin: 10px 0;
+            font-size: 18px; /* Taille du texte des dropdowns */
+            color: #333; /* Couleur du texte */
+        }
+        .dropdown-content {
+            display: none;
+            margin-left: 15px;
+        }
+        .dropdown-content a {
+            display: block;
+            margin: 5px 0;
+            font-size: 16px; /* Taille du texte des liens dans les dropdowns */
+            color: #555; /* Couleur du texte */
+            text-decoration: none; /* Pas de soulignement */
+        }
+        .dropdown-content a:hover {
+            text-decoration: underline; /* Soulignement au survol */
+        }
+        .course-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .course-card h3 {
+            margin: 0;
+            font-size: 20px; /* Taille du titre du cours */
+            color: forestgreen; /* Couleur du titre */
+        }
+        .course-card p {
+            margin: 10px 0 15px;
+            font-size: 16px; /* Taille du texte du cours */
+            color: #333; /* Couleur du texte */
+        }
+        .course-card a {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #45a049;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px; /* Taille du texte du bouton */
+        }
+        .course-card a:hover {
+            background: forestgreen; /* Couleur au survol */
+        }
+
+        /* Media queries pour le responsive design */
+        @media (max-width: 1024px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .matieres-section, .cours-section {
+                width: 100%;
+            }
+        }
